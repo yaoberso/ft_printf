@@ -6,81 +6,55 @@
 /*   By: yaoberso <yaoberso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:03:19 by yaoberso          #+#    #+#             */
-/*   Updated: 2024/10/15 14:00:13 by yaoberso         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:53:20 by yaoberso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdarg.h>
+#include "ft_printf.h"
 
-void	check_format(int i, const char *str, va_list ap)
+int	check_format(char format, va_list ap)
 {
-	if (str[i] == 'c')
-	{
-		char	arg;
-
-		arg = (char)va_arg(ap, int);
-		write(1, &arg, 1);
-	}
-	else if (str[i] == 's')
-	{
-		
-	}
-	else if (str[i] == 'p')
-	{
-		
-	}
-	else if (str[i] == 'd')
-	{
-		
-	}
-	else if (str[i] == 'i')
-	{
-		
-	}
-	else if (str[i] == 'u')
-	{
-		
-	}
-	else if (str[i] == 'x')
-	{
-		
-	}
-	else if (str[i] == 'X')
-	{
-		
-	}
-	else if (str[i] == '%')
-	{
-		write(1, "%", 1);
-	}
-
+	if (format == 'c')
+		return (ft_putchar(va_arg(ap, int)));
+	else if (format == 's')
+		return (ft_putstr(va_arg(ap, char *)));
+	else if (format == 'p')
+		return (ft_putpointer(va_arg(ap, void *)));
+	else if (format == 'd')
+		return (ft_putnbr(va_arg(ap, int)));
+	else if (format == 'i')
+		return (ft_putnbr(va_arg(ap, int)));
+	else if (format == 'u')
+		return (ft_putunsint(va_arg(ap, unsigned int)));
+	else if (format == 'x')
+		return (ft_puthex_lower(va_arg(ap, unsigned int)));
+	else if (format == 'X')
+		return (ft_puthex_upper(va_arg(ap, unsigned int)));
+	else if (format == '%')
+		return (ft_putchar('%'));
+	return (0);
 }
 
 int	ft_printf(const char *format, ...)
 {
 	va_list	ap;
-	int		nb_arg;
+	int		nb_char;
 	int		i;
-	char	*cur_arg;
 
 	va_start(ap, format);
-	cur_arg = va_arg(ap, char *);
-	nb_arg = 0;
-	while (cur_arg != NULL)
+	nb_char = 0;
+	i = 0;
+	while (format[i] != '\0')
 	{
-		i = 0;
-		while (cur_arg[i] != '\0')
+		if (format[i] == '%')
 		{
-			if (cur_arg[i] == '%')
-			{
-				nb_arg++;
-				check_format((i + 1), cur_arg, ap);
-			}
-			i++;
+			nb_char += check_format(format[i + 1], ap);
+			i += 2;
+			continue ;
 		}
-		cur_arg = va_arg(ap, char *);
+		nb_char += ft_putchar(format[i]);
+		i++;
 	}
 	va_end(ap);
-	return (nb_arg);
+	return (nb_char);
 }
